@@ -3,14 +3,28 @@ package com.m2mci.mqttKafkaBridge;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import lombok.Data;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+@Data
 public class CommandLineParser {
 	private static final String ALL_MQTT_TOPICS = "#";
-	private static final String DEFAULT_ZOOKEEPER_CONNECT = "localhost:2181";
+	private static final String DEFAULT_ZOOKEEPER_CONNECT = "localhost:9092";
 	private static final String DEFAULT_MQTT_SERVER_URI = "tcp://localhost:1883";
+
+	@Option(name="--ca", usage="MQTT CA.CRT")
+	private String caCrt = "./ca.crt";
+
+	@Option(name="--clientCrt", usage="MQTT CLIENT.CRT")
+	private String clientCrt = "./client.crt";
+
+	@Option(name="--clientKey", usage="MQTT CLIENT.KEY")
+	private String clientKey = "./client.key";
+
+	@Option(name="--certPass", usage="MQTT CERT PASSWORD")
+	private String password = "";
 
 	@Option(name="--id", usage="MQTT Client ID")
 	private String clientId = "mqttKafkaBridge";
@@ -20,15 +34,15 @@ public class CommandLineParser {
 
 	@Option(name="--zk", usage="Zookeeper connect string")
 	private String zkConnect = DEFAULT_ZOOKEEPER_CONNECT;
-	
+
 	@Option(name="--topics", usage="MQTT topic filters (comma-separated)")
 	private String mqttTopicFilters = ALL_MQTT_TOPICS;
-	
+
 	@Option(name="--help", aliases="-h", usage="Show help")
 	private boolean showHelp = false;
-	
+
 	private CmdLineParser parser = new CmdLineParser(this);
-	
+
 	public String getClientId() {
 		return clientId;
 	}

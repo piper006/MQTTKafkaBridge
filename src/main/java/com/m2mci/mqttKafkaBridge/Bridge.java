@@ -1,7 +1,10 @@
 package com.m2mci.mqttKafkaBridge;
 
+import static com.m2mci.mqttKafkaBridge.SslFactory.getSocketFactory;
+
 import java.util.Properties;
 
+import javax.net.ssl.SSLSocketFactory;
 import kafka.javaapi.producer.Producer;
 import kafka.message.Message;
 import kafka.producer.KeyedMessage;
@@ -12,44 +15,56 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.kohsuke.args4j.CmdLineException;
 
 public class Bridge implements MqttCallback {
-	private Logger logger = Logger.getLogger(this.getClass().getName());
-	private MqttAsyncClient mqtt;
+	private final Logger logger = Logger.getLogger(this.getClass().getName());
+	private	MqttClient mqtt;
+
 	private Producer<String, String> kafkaProducer;
-	
-	private void connect(String serverURI, String clientId, String zkConnect) throws MqttException {
-		
-		mqtt = new MqttAsyncClient(serverURI, clientId);
+	private final MqttConnectOptions options = new MqttConnectOptions();
+
+	private void connect(String serverURI,
+						 String clientId,
+						 String zkConnect,
+						 String caCrt,
+						 String clientCrt,
+						 String clientKey,
+						 String password) throws Exception {
+
+		mqtt = new MqttClient(serverURI, clientId);
 		mqtt.setCallback(this);
-		IMqttToken token = mqtt.connect();
+		IMqttToken token = mqtt.connectWithResult(options);
 		Properties props = new Properties();
-		
-		//Updated based on Kafka v0.8.1.1
-		props.put("metadata.broker.list", "localhost:9092");
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("partitioner.class", "example.producer.SimplePartitioner");
-        props.put("request.required.acks", "1");
-		
+
+		SSLSocketFactory socketFactory = getSocketFactory(caCrt, clientCrt, clientKey, password);
+		options.setSocketFactory(socketFactory);
+
+		mqtt.connect(options);
+		mqtt.setCallback(this);
+		props.put("metadata.broker.list", zkConnect + ":9092");
+		props.put("serializer.class", "kafka.serializer.StringEncoder");
+		props.put("partitioner.class", "example.producer.SimplePartitioner");
+		props.put("request.required.acks", "1");
+
 		ProducerConfig config = new ProducerConfig(props);
-		kafkaProducer = new Producer<String, String>(config);
+		kafkaProducer = new Producer<>(config);
 		token.waitForCompletion();
 		logger.info("Connected to MQTT and Kafka");
 	}
 
 	private void reconnect() throws MqttException {
-		IMqttToken token = mqtt.connect();
+		IMqttToken token = mqtt.connectWithResult(options);
 		token.waitForCompletion();
+		System.out.println("MQTT Reconnected!");
 	}
 	
 	private void subscribe(String[] mqttTopicFilters) throws MqttException {
 		int[] qos = new int[mqttTopicFilters.length];
-		for (int i = 0; i < qos.length; ++i) {
-			qos[i] = 0;
-		}
 		mqtt.subscribe(mqttTopicFilters, qos);
 	}
 
@@ -74,36 +89,37 @@ public class Bridge implements MqttCallback {
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void messageArrived(String topic, MqttMessage message) throws Exception {
+	public void messageArrived(String topic, MqttMessage message){
 		
 		byte[] payload = message.getPayload();
-		System.out.println(new String(message.getPayload()));
-		//Updated based on Kafka v0.8.1.1
-		KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, new String(message.getPayload()));
+		logger.info("Message: " + new String(payload) + " on topic: " + topic);
+		KeyedMessage<String, String> data = new KeyedMessage<>(topic, new String(payload));
 		kafkaProducer.send(data);
 	}
 
 	/**
-	 * @param args
+	 * @param args arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		CommandLineParser parser = null;
 		try {
 			parser = new CommandLineParser();
 			parser.parse(args);
 			Bridge bridge = new Bridge();
-			bridge.connect(parser.getServerURI(), parser.getClientId(), parser.getZkConnect());
+			bridge.connect(parser.getServerURI(), parser.getClientId(), parser.getZkConnect(), parser.getCaCrt(),
+				parser.getClientCrt(), parser.getClientKey(), parser.getPassword());
 			bridge.subscribe(parser.getMqttTopicFilters());
 		} catch (MqttException e) {
 			e.printStackTrace(System.err);
 		} catch (CmdLineException e) {
 			System.err.println(e.getMessage());
 			parser.printUsage(System.err);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

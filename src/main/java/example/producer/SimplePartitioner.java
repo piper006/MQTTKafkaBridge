@@ -3,7 +3,6 @@ package example.producer;
 import kafka.producer.Partitioner;
 import kafka.utils.VerifiableProperties;
 
-//Added Class to support Kafka v0.8.1.1
 public class SimplePartitioner implements Partitioner {
     public SimplePartitioner (VerifiableProperties props) {
 

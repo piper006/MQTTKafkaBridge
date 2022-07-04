@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.m2mci</groupId>
 	<artifactId>mqttKafkaBridge</artifactId>
 	<version>0.1.0</version>
 
-	<!-- This should point to the location of the remote git repository modify 
-		this as necessary. This is needed for doing releases -->
 	<scm>
 		<developerConnection>
-            scm:git:https://bitbucket.org/m2mconnections/mqttKafkaBridge.git
-        </developerConnection>
+			scm:git:https://bitbucket.org/m2mconnections/mqttKafkaBridge.git
+		</developerConnection>
 	</scm>
-	<!-- <repositories> <repository> <id>clojars.org</id> <url>http://clojars.org/repo</url> 
-		</repository> </repositories> -->
 
-	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -82,12 +77,41 @@
 			<artifactId>zkclient</artifactId>
 			<version>0.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.60</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>1.60</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
-	<!-- Plugins -->
 	<build>
 		<plugins>
-			<!-- Set the compiler plugin - override default JDK version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.m2mci.mqttKafkaBridge.Bridge</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -97,7 +121,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<!-- These plugins are needed for doing releases -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -118,7 +141,6 @@
 				<artifactId>maven-source-plugin</artifactId>
 				<version>2.2.1</version>
 			</plugin>
-			<!-- Code coverage plugin -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -140,7 +162,6 @@
 		</plugins>
 	</build>
 
-	<!-- Used for doing releases and pushing artifacts to Artifactory -->
 	<distributionManagement>
 		<snapshotRepository>
 			<id>m2m-snapshot</id>
@@ -154,11 +175,8 @@
 		</repository>
 	</distributionManagement>
 
-	<!-- Properties -->
 	<properties>
-		<!-- Set the source and output encodings, to avoid warnings about the encodings 
-			not being set -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-</project>-
+</project>

@@ -1,0 +1,4 @@
+com/m2mci/mqttKafkaBridge/Bridge.class
+example/producer/SimplePartitioner.class
+com/m2mci/mqttKafkaBridge/CommandLineParser.class
+com/m2mci/mqttKafkaBridge/SslFactory.class
