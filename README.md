@@ -8,15 +8,15 @@ Bridge which consumes MQTT messages and republishes them on Kafka on the same to
 
 Where `options` are:
 
-    --help (-h)  : Show help
-    --id VAL     : MQTT Client ID
-    --topics VAL : MQTT topic filters (comma-separated)
-    --uri VAL    : MQTT Server URI
-    --zk VAL     : Zookeeper connect string
-    --ca PATH    : Ca.crt certificate file path
-    --clientCrt  : Client.crt certificate file path
-    --clientKey  : Client.key certificate file path
-    --certPass   : Certificate password
+    --help (-h)  : Show help                    
+    --id VAL     : MQTT Client ID                       (DEFAULT: "mqttKafkaBridge")
+    --topics VAL : MQTT topic filters (comma-separated) (DEFAULT: "#")
+    --uri VAL    : MQTT Server URI                      (DEFAULT: "tcp://localhost:1883")
+    --zk VAL     : Zookeeper connect string             (DEFAULT: "localhost")
+    --ca PATH    : Ca.crt certificate file path         (DEFAULT: "./ca.crt")
+    --clientCrt  : Client.crt certificate file path     (DEFAULT: "./client.crt")
+    --clientKey  : Client.key certificate file path     (DEFAULT: "./client.key")
+    --certPass   : Certificate password                 (DEFAULT: "")
 
 If you don't specify any command-line options, it uses the following defaults:
 
