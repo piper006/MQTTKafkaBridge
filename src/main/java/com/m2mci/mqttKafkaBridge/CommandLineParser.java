@@ -11,7 +11,7 @@ import org.kohsuke.args4j.Option;
 @Data
 public class CommandLineParser {
 	private static final String ALL_MQTT_TOPICS = "#";
-	private static final String DEFAULT_ZOOKEEPER_CONNECT = "localhost:9092";
+	private static final String DEFAULT_ZOOKEEPER_CONNECT = "localhost";
 	private static final String DEFAULT_MQTT_SERVER_URI = "tcp://localhost:1883";
 
 	@Option(name="--ca", usage="MQTT CA.CRT")
