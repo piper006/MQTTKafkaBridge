@@ -13,6 +13,10 @@ Where `options` are:
     --topics VAL : MQTT topic filters (comma-separated)
     --uri VAL    : MQTT Server URI
     --zk VAL     : Zookeeper connect string
+    --ca PATH    : Ca.crt certificate file path
+    --clientCrt  : Client.crt certificate file path
+    --clientKey  : Client.key certificate file path
+    --certPass   : Certificate password
 
 If you don't specify any command-line options, it uses the following defaults:
 
