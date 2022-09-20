@@ -43,7 +43,7 @@ public class Bridge implements MqttCallback {
 
 		SSLSocketFactory socketFactory = getSocketFactory(caCrt, clientCrt, clientKey, password);
 		options.setSocketFactory(socketFactory);
-
+		options.setKeepAliveInterval(Integer.MAX_VALUE);
 		mqtt.connect(options);
 		mqtt.setCallback(this);
 		props.put("metadata.broker.list", zkConnect + ":9092");
