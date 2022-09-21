@@ -29,6 +29,12 @@ public class CommandLineParser {
 	@Option(name="--id", usage="MQTT Client ID")
 	private String clientId = "mqttKafkaBridge";
 
+	@Option(name="--username", usage="MQTT Username")
+	private String username = "";
+
+	@Option(name="--userPass", usage="MQTT Username Password")
+	private String userPass = "";
+
 	@Option(name="--uri", usage="MQTT Server URI")
 	private String serverURI = DEFAULT_MQTT_SERVER_URI;
 

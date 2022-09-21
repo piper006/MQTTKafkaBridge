@@ -34,7 +34,10 @@ public class Bridge implements MqttCallback {
 						 String caCrt,
 						 String clientCrt,
 						 String clientKey,
-						 String password) throws Exception {
+						 String password,
+						 String username,
+						 String userPass
+	) throws Exception {
 
 		mqtt = new MqttClient(serverURI, clientId);
 		mqtt.setCallback(this);
@@ -43,7 +46,8 @@ public class Bridge implements MqttCallback {
 
 		SSLSocketFactory socketFactory = getSocketFactory(caCrt, clientCrt, clientKey, password);
 		options.setSocketFactory(socketFactory);
-		options.setKeepAliveInterval(Integer.MAX_VALUE);
+		options.setUserName(username);
+		options.setPassword(userPass.toCharArray());
 		mqtt.connect(options);
 		mqtt.setCallback(this);
 		props.put("metadata.broker.list", zkConnect + ":9092");
@@ -111,7 +115,7 @@ public class Bridge implements MqttCallback {
 			parser.parse(args);
 			Bridge bridge = new Bridge();
 			bridge.connect(parser.getServerURI(), parser.getClientId(), parser.getZkConnect(), parser.getCaCrt(),
-				parser.getClientCrt(), parser.getClientKey(), parser.getPassword());
+				parser.getClientCrt(), parser.getClientKey(), parser.getPassword(), parser.getUsername(),parser.getUserPass());
 			bridge.subscribe(parser.getMqttTopicFilters());
 		} catch (MqttException e) {
 			e.printStackTrace(System.err);
