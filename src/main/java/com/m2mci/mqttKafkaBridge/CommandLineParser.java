@@ -38,6 +38,11 @@ public class CommandLineParser {
 	@Option(name="--topics", usage="MQTT topic filters (comma-separated)")
 	private String mqttTopicFilters = ALL_MQTT_TOPICS;
 
+	@Option(name="--username", usage="MQTT Username")
+	private String username = "";
+
+	@Option(name="--userPass", usage="MQTT Username Password")
+	private String userPass = "";
 	@Option(name="--help", aliases="-h", usage="Show help")
 	private boolean showHelp = false;
 
