@@ -42,8 +42,6 @@ public class Bridge implements MqttCallback {
 		mqtt.setCallback(this);
 		Properties props = new Properties();
 
-		SSLSocketFactory socketFactory = getSocketFactory(caCrt, clientCrt, clientKey, password);
-		options.setSocketFactory(socketFactory);
 		if(username != null && !username.isEmpty()){
 			options.setUserName(username);
 		}
